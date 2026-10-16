@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -15,11 +16,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const PORT = process.env.PORT || 3000;
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306
+  host: process.env.DB_HOST,//the host of the database
+  user: process.env.DB_USER,//the user name of the database
+  password: process.env.DB_PASSWORD,//the password of the database
+  database: process.env.DB_NAME,//the name of the database
+  port: process.env.DB_PORT || 3306//the port of the database
 });
 
 db.connect((err) => {
