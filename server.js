@@ -486,6 +486,7 @@ app.delete("/api/cart", requireAuth, (req, res) => {
 
 // ORDERS
 app.post("/api/orders", requireAuth, (req, res) => {
+  console.log("ORDER ROUTE REACHED");
   const {
     customer_name,
     phone,
@@ -532,6 +533,7 @@ app.post("/api/orders", requireAuth, (req, res) => {
 });
 
 app.get("/api/admin/orders", requireAdmin, (req, res) => {
+  console.log("ORDER ROUTE REACHED");
   db.query("SELECT * FROM orders ORDER BY created_at DESC", (err, rows) => {
     if (err) {
       console.log(err);
