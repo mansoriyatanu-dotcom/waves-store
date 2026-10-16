@@ -444,21 +444,16 @@ async function placeOrder(){
 
   try{
 
-    const res =
-    await fetch(
-      "http://localhost:3000/api/orders",
-      {
+    
+const res = await fetch(`${API_URL}/orders`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: getToken()
+  },
+  body: JSON.stringify(orderData)
+});
 
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json",
-          Authorization:getToken()
-        },
-
-        body:JSON.stringify(orderData)
-      }
-    );
 
     const result =
     await res.json();
