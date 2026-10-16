@@ -94,7 +94,7 @@ app.post("/api/upload", requireAdmin, upload.single("image"), (req, res) => {
   });
 });
 
-// HOME
+/*/ HOME
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
@@ -129,6 +129,53 @@ app.post("/api/register", (req, res) => {
       res.json({
         token,
         username,
+        is_admin: 0
+      });
+    }
+  );
+});
+*/
+
+app.post("/api/register", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      error: "Username and password required"
+    });
+  }
+
+  const hashed = hashPassword(password);
+
+  db.query(
+    "INSERT INTO users (username, password, is_admin) VALUES (?, ?, 0)",
+    [username.trim(), hashed],
+    (err, result) => {
+      if (err) {
+        console.error("REGISTRATION DB ERROR:", err.code, err.message);
+
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({
+            error: "This username already exists. Please log in or choose another username."
+          });
+        }
+
+        return res.status(500).json({
+          error: "Registration failed. Please try again later."
+        });
+      }
+
+      const token = generateToken();
+
+      sessions[token] = {
+        id: result.insertId,
+        username: username.trim(),
+        is_admin: 0
+      };
+
+      return res.json({
+        token,
+        username: username.trim(),
         is_admin: 0
       });
     }
