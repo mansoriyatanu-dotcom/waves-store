@@ -516,9 +516,13 @@ app.post("/api/orders", requireAuth, (req, res) => {
     ],
     (err) => {
       if (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Order failed" });
-      }
+  console.error("ORDER SAVE DB ERROR:", err.code, err.message);
+
+  return res.status(500).json({
+    error: "Order failed",
+    code: err.code || "UNKNOWN"
+  });
+}
 
       db.query("DELETE FROM cart WHERE user_id = ?", [req.user.id], () => {
         res.json({ message: "Order placed successfully" });
