@@ -16,35 +16,33 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const PORT = process.env.PORT || 3000;
 
 
-const db = mysql.createConnection({
+
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT || 3306),
+  port: Number(process.env.DB_PORT || 4000),
   ssl: process.env.DB_SSL_CA
     ? { ca: process.env.DB_SSL_CA }
-    : undefined
+    : undefined,
+  waitForConnections: true,
+  connectionLimit: 5,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
-    console.error("❌ DB Error:", err.message);
+    console.error("❌ DB Pool Error:", err.message);
     return;
   }
 
-  console.log("✅ MySQL Connected");
+  console.log("✅ MySQL Pool Connected");
+  connection.release();
 });
 
-
-db.connect((err) => {
-  if (err) {
-    console.log("❌ DB Error:", err);
-    return;
-  }
-
-  console.log("✅ MySQL Connected");
-});
 
 function hashPassword(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
